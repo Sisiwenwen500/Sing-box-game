@@ -414,6 +414,8 @@ rm -rf web bot npm boot.log config.json sb.log core tunnel.yml tunnel.json
 
 
 #主菜单
+
+# 主菜单
 menu() {
    clear
    echo ""
@@ -426,14 +428,11 @@ menu() {
    echo  "==============="
    red "0. 退出脚本"
    echo "==========="
-   reading "请输入选择(0-3): " choice
-   echo ""
-    case "${choice}" in
-        1) install_singbox ;;
-        2) uninstall_singbox ;; 
-        3) cat $WORKDIR/list.txt ;; 
-        0) exit 0 ;;
-        *) red "无效的选项，请输入 0 到 3" ;;
-    esac
+   echo "将于 5 秒后默认选择安装sing-box..."
+   sleep 5  # 等待 5 秒
+
+   # 直接调用安装函数
+   install_singbox
 }
-menu
+
+menu  # 调用菜单
