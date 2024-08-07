@@ -22,8 +22,8 @@ export ARGO_DOMAIN=${ARGO_DOMAIN:-''}
 export ARGO_AUTH=${ARGO_AUTH:-''} 
 
 read_vmess_port() {
-    # 直接将 vmess 端口设置为 12657
-    vmess_port=12657
+    # 直接将 vmess 端口设置为 8888
+    vmess_port=8888
     
     # 输出设置的 vmess 端口
     green "你的vmess端口为: $vmess_port"
@@ -31,7 +31,7 @@ read_vmess_port() {
 
 read_hy2_port() {
     # 直接将 hysteria2 端口设置为 8888
-    hy2_port=38827
+    hy2_port=8888
     
     # 输出设置的 hysteria2 端口
     green "你的hysteria2端口为: $hy2_port"
@@ -39,7 +39,7 @@ read_hy2_port() {
 
 read_tuic_port() {
     # 直接将 tuic 端口设置为 8888
-    tuic_port=2302
+    tuic_port=8888
     
     # 输出设置的 tuic 端口
     green "你的tuic端口为: $tuic_port"
