@@ -413,26 +413,31 @@ rm -rf web bot npm boot.log config.json sb.log core tunnel.yml tunnel.json
 }
 
 
-#主菜单
-
 # 主菜单
 menu() {
    clear
    echo ""
    purple "=== Serv00|ct8sing-box一键安装脚本 ===\n"
    green "1. 安装sing-box"
-   echo  "==============="
+   echo "==============="
    red "2. 卸载sing-box"
-   echo  "==============="
+   echo "==============="
    green "3. 查看节点信息"
-   echo  "==============="
+   echo "==============="
    red "0. 退出脚本"
    echo "==========="
    echo "将于 5 秒后默认选择安装sing-box..."
-   sleep 5  # 等待 5 秒
-
+   
+   # 添加按任意键返回菜单选择的功能
+   if read -t 5 -n 1 key; then
+       echo -e "\n你按下了一个键，返回菜单..."
+   else
+       echo -e "\n等待时间结束，默认选择安装sing-box..."
+   fi
+   
    # 直接调用安装函数
    install_singbox
 }
 
-menu  # 调用菜单
+# 调用菜单
+menu
