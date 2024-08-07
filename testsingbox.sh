@@ -81,6 +81,20 @@ install_singbox() {
     get_links
 }
 
+uninstall_singbox() {
+  reading "\n确定要卸载吗？【y/n】: " choice
+    case "$choice" in
+       [Yy])
+          kill -9 $(ps aux | grep '[w]eb' | awk '{print $2}')
+          kill -9 $(ps aux | grep '[b]ot' | awk '{print $2}')
+          kill -9 $(ps aux | grep '[n]pm' | awk '{print $2}')
+          rm -rf $WORKDIR
+          ;;
+        [Nn]) exit 0 ;;
+    	*) red "无效的选择，请输入y或n" && menu ;;
+    esac
+}
+
 argo_configure() {
     # 直接使用临时隧道，不需要用户选择
     green "ARGO隧道变量未设置，将使用临时隧道"
