@@ -21,9 +21,6 @@ export NEZHA_KEY=${NEZHA_KEY:-''}
 export ARGO_DOMAIN=${ARGO_DOMAIN:-''}   
 export ARGO_AUTH=${ARGO_AUTH:-''} 
 
-[[ "$HOSTNAME" == "s1.ct8.pl" ]] && WORKDIR="domains/${USERNAME}.ct8.pl/logs" || WORKDIR="domains/${USERNAME}.serv00.net/logs"
-[ -d "$WORKDIR" ] || (mkdir -p "$WORKDIR" && chmod 777 "$WORKDIR")
-
 read_vmess_port() {
     # 直接将 vmess 端口设置为 8888
     vmess_port=8888
@@ -421,7 +418,7 @@ hysteria2://$UUID@$IP:$hy2_port/?sni=www.bing.com&alpn=h3&insecure=1#$ISP
 
 tuic://$UUID:admin123@$IP:$tuic_port?sni=www.bing.com&congestion_control=bbr&udp_relay_mode=native&alpn=h3&allow_insecure=1#$ISP
 EOF
-cat "$WORKDIR/list.txt"
+cat list.txt
 purple "list.txt saved successfully"
 purple "Running done!"
 sleep 3 
@@ -461,13 +458,7 @@ menu() {
     case "${choice}" in
         1) install_singbox ;;
         2) uninstall_singbox ;; 
-        3) 	
-            if [ -f "$WORKDIR/list.txt" ]; then
-                cat "$WORKDIR/list.txt"
-            else
-                red "list.txt 不存在，请先运行安装!"
-            fi
-            ;;
+        3) cat "$WORKDIR/list.txt"
         0) exit 0 ;;
         *) red "无效的选项，请输入 0 到 3" ;;
    esac
