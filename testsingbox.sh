@@ -461,7 +461,13 @@ menu() {
     case "${choice}" in
         1) install_singbox ;;
         2) uninstall_singbox ;; 
-        3) cat $WORKDIR/list.txt ;; 
+        3) 	
+            if [ -f "$WORKDIR/list.txt" ]; then
+                cat "$WORKDIR/list.txt"
+            else
+                red "list.txt 不存在，请先运行安装!"
+            fi
+            ;;
         0) exit 0 ;;
         *) red "无效的选项，请输入 0 到 3" ;;
    esac
