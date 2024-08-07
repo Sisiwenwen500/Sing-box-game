@@ -21,135 +21,93 @@ export NEZHA_KEY=${NEZHA_KEY:-''}
 export ARGO_DOMAIN=${ARGO_DOMAIN:-''}   
 export ARGO_AUTH=${ARGO_AUTH:-''} 
 
-[[ "$HOSTNAME" == "s1.ct8.pl" ]] && WORKDIR="domains/${USERNAME}.ct8.pl/logs" || WORKDIR="domains/${USERNAME}.serv00.net/logs"
-[ -d "$WORKDIR" ] || (mkdir -p "$WORKDIR" && chmod 777 "$WORKDIR")
-
 read_vmess_port() {
-    while true; do
-        reading "请输入vmess端口 (面板开放的tcp端口): " vmess_port
-        if [[ "$vmess_port" =~ ^[0-9]+$ ]] && [ "$vmess_port" -ge 1 ] && [ "$vmess_port" -le 65535 ]; then
-            green "你的vmess端口为: $vmess_port"
-            break
-        else
-            yellow "输入错误，请重新输入面板开放的TCP端口"
-        fi
-    done
+    # 直接将 vmess 端口设置为 12657
+    vmess_port=12657
+    
+    # 输出设置的 vmess 端口
+    green "你的vmess端口为: $vmess_port"
 }
 
 read_hy2_port() {
-    while true; do
-        reading "请输入hysteria2端口 (面板开放的UDP端口): " hy2_port
-        if [[ "$hy2_port" =~ ^[0-9]+$ ]] && [ "$hy2_port" -ge 1 ] && [ "$hy2_port" -le 65535 ]; then
-            green "你的hysteria2端口为: $hy2_port"
-            break
-        else
-            yellow "输入错误，请重新输入面板开放的UDP端口"
-        fi
-    done
+    # 直接将 hysteria2 端口设置为 8888
+    hy2_port=38827
+    
+    # 输出设置的 hysteria2 端口
+    green "你的hysteria2端口为: $hy2_port"
 }
 
 read_tuic_port() {
-    while true; do
-        reading "请输入Tuic端口 (面板开放的UDP端口): " tuic_port
-        if [[ "$tuic_port" =~ ^[0-9]+$ ]] && [ "$tuic_port" -ge 1 ] && [ "$tuic_port" -le 65535 ]; then
-            green "你的tuic端口为: $tuic_port"
-            break
-        else
-            yellow "输入错误，请重新输入面板开放的UDP端口"
-        fi
-    done
+    # 直接将 tuic 端口设置为 8888
+    tuic_port=2302
+    
+    # 输出设置的 tuic 端口
+    green "你的tuic端口为: $tuic_port"
+
 }
 
 read_nz_variables() {
+  # 检查现有的环境变量
   if [ -n "$NEZHA_SERVER" ] && [ -n "$NEZHA_PORT" ] && [ -n "$NEZHA_KEY" ]; then
       green "使用自定义变量哪吒运行哪吒探针"
       return
   else
-      reading "是否需要安装哪吒探针？【y/n】: " nz_choice
-      [[ -z $nz_choice ]] && return
-      [[ "$nz_choice" != "y" && "$nz_choice" != "Y" ]] && return
-      reading "请输入哪吒探针域名或ip：" NEZHA_SERVER
-      green "你的哪吒域名为: $NEZHA_SERVER"
-      reading "请输入哪吒探针端口（回车跳过默认使用5555）：" NEZHA_PORT
-      [[ -z $NEZHA_PORT ]] && NEZHA_PORT="5555"
-      green "你的哪吒端口为: $NEZHA_PORT"
-      reading "请输入哪吒探针密钥：" NEZHA_KEY
-      green "你的哪吒密钥为: $NEZHA_KEY"
+      # 默认选择不安装
+      echo "默认选择不安装哪吒探针"
+      return
   fi
 }
 
 install_singbox() {
-echo -e "${yellow}本脚本同时四协议共存${purple}(vmess-ws,vmess-ws-tls(argo),hysteria2,tuic)${re}"
-echo -e "${yellow}开始运行前，请确保在面板${purple}已开放3个端口，一个tcp端口和两个udp端口${re}"
-echo -e "${yellow}面板${purple}Additional services中的Run your own applications${yellow}已开启为${purplw}Enabled${yellow}状态${re}"
-reading "\n确定继续安装吗？【y/n】: " choice
-  case "$choice" in
-    [Yy])
-        cd $WORKDIR
-        read_nz_variables
-        read_vmess_port
-        read_hy2_port
-        read_tuic_port
-        argo_configure
-        generate_config
-        download_singbox && wait
-        run_sb && sleep 3
-        get_links
-      ;;
-    [Nn]) exit 0 ;;
-    *) red "无效的选择，请输入y或n" && menu ;;
-  esac
-}
+    echo -e "${yellow}本脚本同时四协议共存${purple}(vmess-ws,vmess-ws-tls(argo),hysteria2,tuic)${re}"
+    echo -e "${yellow}开始运行前，请确保在面板${purple}已开放3个端口，一个tcp端口和两个udp端口${re}"
+    echo -e "${yellow}面板${purple}Additional services中的Run your own applications${yellow}已开启为${purple}Enabled${yellow}状态${re}"
 
-uninstall_singbox() {
-  reading "\n确定要卸载吗？【y/n】: " choice
-    case "$choice" in
-       [Yy])
-          kill -9 $(ps aux | grep '[w]eb' | awk '{print $2}')
-          kill -9 $(ps aux | grep '[b]ot' | awk '{print $2}')
-          kill -9 $(ps aux | grep '[n]pm' | awk '{print $2}')
-          rm -rf $WORKDIR
-          ;;
-        [Nn]) exit 0 ;;
-    	*) red "无效的选择，请输入y或n" && menu ;;
-    esac
+    # 默认直接开始安装
+    echo -e "${yellow}正在自动开始安装...${re}"
+
+    # 进入工作目录
+    cd $WORKDIR
+
+    # 调用相关函数开始安装
+    read_nz_variables
+    read_vmess_port
+    read_hy2_port
+    read_tuic_port
+    argo_configure
+    generate_config
+    download_singbox && wait
+    run_sb && sleep 3
+    get_links
 }
 
 argo_configure() {
-  if [[ -z $ARGO_AUTH || -z $ARGO_DOMAIN ]]; then
-      reading "是否需要使用固定argo隧道？【y/n】: " argo_choice
-      [[ -z $argo_choice ]] && return
-      [[ "$argo_choice" != "y" && "$argo_choice" != "Y" && "$argo_choice" != "n" && "$argo_choice" != "N" ]] && { red "无效的选择，请输入y或n"; return; }
-      if [[ "$argo_choice" == "y" || "$argo_choice" == "Y" ]]; then
-          reading "请输入argo固定隧道域名: " ARGO_DOMAIN
-          green "你的argo固定隧道域名为: $ARGO_DOMAIN"
-          reading "请输入argo固定隧道密钥（Json或Token）: " ARGO_AUTH
-          green "你的argo固定隧道密钥为: $ARGO_AUTH"
-	  echo -e "${red}注意：${purple}使用token，需要在cloudflare后台设置隧道端口和面板开放的tcp端口一致${re}"
-      else
-          green "ARGO隧道变量未设置，将使用临时隧道"
-          return
-      fi
-  fi
+    # 直接使用临时隧道，不需要用户选择
+    green "ARGO隧道变量未设置，将使用临时隧道"
+    
+    # 在这里您可以根据需要设置临时隧道的默认配置
+    # 例如，不需要用户提供 ARGO_DOMAIN 和 ARGO_AUTH，可以使用默认值
 
-  if [[ $ARGO_AUTH =~ TunnelSecret ]]; then
-    echo $ARGO_AUTH > tunnel.json
+    # 生成临时隧道的配置文件，这里不再需要用户输入
     cat > tunnel.yml << EOF
-tunnel: $(cut -d\" -f12 <<< "$ARGO_AUTH")
+tunnel: $RANDOM  # 使用随机生成的隧道名称或其他合适的值
 credentials-file: tunnel.json
 protocol: http2
 
 ingress:
-  - hostname: $ARGO_DOMAIN
+  - hostname: your-temporary-domain.com  # 可替换为您的临时隧道域名或 IP
     service: http://localhost:$vmess_port
     originRequest:
       noTLSVerify: true
   - service: http_status:404
 EOF
-  else
-    green "ARGO_AUTH mismatch TunnelSecret,use token connect to tunnel"
-  fi
+
+    # 创建空的 tunnel.json，或者添加其他默认配置
+    echo "{" > tunnel.json
+    echo "}" >> tunnel.json
 }
+
+# Download Dependency Files
 
 # Download Dependency Files
 download_singbox() {
