@@ -413,7 +413,6 @@ rm -rf web bot npm boot.log config.json sb.log core tunnel.yml tunnel.json
 }
 
 
-# 主菜单
 menu() {
    clear
    echo ""
@@ -426,17 +425,29 @@ menu() {
    echo "==============="
    red "0. 退出脚本"
    echo "==========="
-   echo "将于 5 秒后默认选择安装sing-box..."
-   
-   # 添加按任意键返回菜单选择的功能
+   echo "将在 5 秒后默认选择安装sing-box..."
+
+   # 处理用户输入或默认选择
    if read -t 5 -n 1 key; then
-       echo -e "\n你按下了一个键，返回菜单..."
+       echo -e "\n你按下了一个键，进入选择菜单..."
    else
        echo -e "\n等待时间结束，默认选择安装sing-box..."
+       choice=1  # 自动选择安装
    fi
-   
-   # 直接调用安装函数
-   install_singbox
+
+   # 进入菜单选择
+   if [ -z "$choice" ]; then
+       reading "请输入选择(0-3): " choice
+   fi
+
+   echo ""
+   case "${choice}" in
+       1) install_singbox ;;
+       2) uninstall_singbox ;; 
+       3) cat $WORKDIR/list.txt ;; 
+       0) exit 0 ;;
+       *) red "无效的选项，请输入 0 到 3" ;;
+   esac
 }
 
 # 调用菜单
