@@ -118,7 +118,6 @@ ingress:
       noTLSVerify: true
   - service: http_status:404
 EOF
-
     echo "{" > tunnel.json
     echo "}" >> tunnel.json
 }
