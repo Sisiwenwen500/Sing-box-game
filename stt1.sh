@@ -118,9 +118,9 @@ ingress:
       noTLSVerify: true
   - service: http_status:404
 EOF
-  else
-    green "ARGO_AUTH mismatch TunnelSecret,use token connect to tunnel"
-  fi
+
+    echo "{" > tunnel.json
+    echo "}" >> tunnel.json
 }
 
 # Download Dependency Files
