@@ -21,6 +21,9 @@ export NEZHA_KEY=${NEZHA_KEY:-''}
 export ARGO_DOMAIN=${ARGO_DOMAIN:-''}   
 export ARGO_AUTH=${ARGO_AUTH:-''} 
 
+[[ "$HOSTNAME" == "s1.ct8.pl" ]] && WORKDIR="domains/${USERNAME}.ct8.pl/logs" || WORKDIR="domains/${USERNAME}.serv00.net/logs"
+[ -d "$WORKDIR" ] || (mkdir -p "$WORKDIR" && chmod 777 "$WORKDIR")
+
 read_vmess_port() {
     # 直接将 vmess 端口设置为 8888
     vmess_port=8010
@@ -115,13 +118,10 @@ ingress:
       noTLSVerify: true
   - service: http_status:404
 EOF
-
-    # 创建空的 tunnel.json，或者添加其他默认配置
-    echo "{" > tunnel.json
-    echo "}" >> tunnel.json
+  else
+    green "ARGO_AUTH mismatch TunnelSecret,use token connect to tunnel"
+  fi
 }
-
-# Download Dependency Files
 
 # Download Dependency Files
 download_singbox() {
